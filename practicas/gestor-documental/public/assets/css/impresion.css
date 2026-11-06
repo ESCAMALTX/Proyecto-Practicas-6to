@@ -1,0 +1,388 @@
+/* =====================================================================
+   Archivo: impresion.css
+   Descripcion: Estilos de la version imprimible de reportes, reglas
+                de impresion y adaptacion responsiva.
+
+   ORDEN DE CARGA:
+     1. tokens.css
+     2. layout.css
+     3. formularios.css
+     4. componentes.css
+     5. auth.css
+     6. impresion.css  <- este archivo (ultimo)
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. HOJA IMPRIMIBLE
+   --------------------------------------------------------------------- */
+body.impresion {
+    background: #e6eaf0;
+    padding: var(--esp-6) var(--esp-4);
+}
+
+.impresion__hoja {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--esp-10);
+    background: var(--blanco);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra-lg);
+}
+
+.impresion__cabecera {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--esp-6);
+    padding-bottom: var(--esp-5);
+    margin-bottom: var(--esp-6);
+    border-bottom: 2px solid var(--azul-800);
+    flex-wrap: wrap;
+}
+
+.impresion__marca {
+    display: flex;
+    align-items: center;
+    gap: var(--esp-3);
+}
+
+.impresion__titulo {
+    font-size: var(--texto-xl);
+    line-height: 1.25;
+}
+
+.impresion__subtitulo {
+    margin: var(--esp-1) 0 0;
+    font-size: var(--texto-md);
+    color: var(--texto-suave);
+}
+
+.impresion__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-1);
+    font-size: var(--texto-sm);
+    text-align: right;
+}
+
+.impresion__meta dt {
+    font-weight: 700;
+    color: var(--texto-tenue);
+    text-transform: uppercase;
+    font-size: var(--texto-xs);
+    letter-spacing: .4px;
+}
+
+.impresion__meta dd {
+    color: var(--texto);
+    margin-bottom: var(--esp-1);
+}
+
+.impresion__seccion {
+    margin-bottom: var(--esp-8);
+    break-inside: avoid;
+}
+
+.impresion__seccion-titulo {
+    font-size: var(--texto-lg);
+    padding-bottom: var(--esp-2);
+    margin-bottom: var(--esp-4);
+    border-bottom: 1px solid var(--borde);
+    color: var(--azul-800);
+}
+
+.tabla--impresion {
+    font-size: var(--texto-sm);
+}
+
+.tabla--impresion thead th {
+    background: var(--azul-050);
+    color: var(--azul-800);
+    border-bottom: 1px solid var(--azul-300);
+}
+
+.tabla--impresion tbody td {
+    border-bottom: 1px solid var(--borde-suave);
+}
+
+.tabla--impresion tbody th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--texto-suave);
+    padding: var(--esp-2) var(--esp-3);
+    background: var(--fondo-suave);
+}
+
+.impresion__firmas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--esp-10);
+    margin-top: var(--esp-10);
+}
+
+.impresion__firma {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+}
+
+.impresion__firma-linea {
+    height: 60px;
+    border-bottom: 1px solid var(--texto);
+}
+
+.impresion__firma-cargo {
+    font-size: var(--texto-sm);
+    color: var(--texto-suave);
+    text-align: center;
+}
+
+.impresion__pie {
+    margin-top: var(--esp-8);
+    padding-top: var(--esp-4);
+    border-top: 1px solid var(--borde);
+    font-size: var(--texto-xs);
+    color: var(--texto-tenue);
+    line-height: 1.6;
+}
+
+.impresion__acciones {
+    max-width: 900px;
+    margin: var(--esp-5) auto 0;
+    display: flex;
+    gap: var(--esp-3);
+    justify-content: center;
+}
+
+/* ---------------------------------------------------------------------
+   2. REGLAS DE IMPRESION
+   --------------------------------------------------------------------- */
+@media print {
+    body,
+    body.impresion {
+        background: var(--blanco);
+        padding: 0;
+        font-size: 11pt;
+    }
+
+    .impresion__acciones,
+    .app__lateral,
+    .cabecera,
+    .pie,
+    .boton,
+    .paginacion,
+    .filtros,
+    .tarjeta__cabecera .enlace {
+        display: none !important;
+    }
+
+    .app__principal {
+        margin-left: 0;
+    }
+
+    .contenido {
+        padding: 0;
+        gap: var(--esp-4);
+    }
+
+    .impresion__hoja {
+        max-width: none;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .tarjeta {
+        border: 1px solid var(--borde);
+        box-shadow: none;
+        break-inside: avoid;
+    }
+
+    .tabla {
+        font-size: 9pt;
+    }
+
+    .tabla thead th {
+        background: var(--gris-100) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .badge,
+    .chip-archivo {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        border: 1px solid var(--borde);
+    }
+
+    /* Evita que las tablas largas se corten mal */
+    .tabla tr {
+        break-inside: avoid;
+    }
+
+    /* Encabezados que se repiten en cada pagina */
+    .tabla thead {
+        display: table-header-group;
+    }
+
+    a[href]::after {
+        content: '';
+    }
+}
+
+/* ---------------------------------------------------------------------
+   3. RESPONSIVO
+   --------------------------------------------------------------------- */
+
+/* Pantallas medianas: se colapsa el menu lateral */
+@media (max-width: 1100px) {
+    .app__lateral {
+        transform: translateX(-100%);
+        transition: transform var(--transicion);
+        box-shadow: var(--sombra-lg);
+    }
+
+    .app__lateral--abierto {
+        transform: translateX(0);
+    }
+
+    .app__principal {
+        margin-left: 0;
+    }
+
+    .cabecera__boton-menu {
+        display: block;
+    }
+
+    .rejilla--3,
+    .rejilla--4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .formulario__fila--4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Tabletas */
+@media (max-width: 860px) {
+    .rejilla--2,
+    .rejilla--3,
+    .rejilla--4 {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario__fila,
+    .formulario__fila--3,
+    .formulario__fila--4 {
+        grid-template-columns: 1fr;
+    }
+
+    .campo--amplio {
+        grid-column: span 1;
+    }
+
+    .contenido {
+        padding: var(--esp-4);
+    }
+
+    .cabecera {
+        padding: 0 var(--esp-4);
+    }
+
+    .cabecera__subtitulo {
+        max-width: 200px;
+    }
+
+    .perfil-mini__datos {
+        display: none;
+    }
+
+    .lista-datos__fila,
+    .lista-datos--compacta .lista-datos__fila {
+        grid-template-columns: 1fr;
+        gap: var(--esp-1);
+    }
+
+    .grafico-barras__fila {
+        grid-template-columns: 120px 1fr auto;
+    }
+
+    .impresion__hoja {
+        padding: var(--esp-5);
+    }
+
+    .impresion__cabecera,
+    .impresion__meta {
+        text-align: left;
+    }
+}
+
+/* Moviles */
+@media (max-width: 560px) {
+    :root {
+        --texto-2xl: 20px;
+        --texto-3xl: 24px;
+    }
+
+    .cabecera__acciones .boton {
+        display: none;
+    }
+
+    .buscador__caja {
+        flex-wrap: wrap;
+    }
+
+    .buscador__entrada {
+        font-size: var(--texto-base);
+        width: 100%;
+    }
+
+    .buscador__caja .boton {
+        width: 100%;
+    }
+
+    .metricas {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .metrica {
+        padding: var(--esp-3);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--esp-2);
+    }
+
+    .metrica__icono {
+        width: 36px;
+        height: 36px;
+        font-size: var(--texto-base);
+    }
+
+    .metrica__valor {
+        font-size: var(--texto-xl);
+    }
+
+    .grafico-barras__fila {
+        grid-template-columns: 1fr;
+        gap: var(--esp-1);
+    }
+
+    .grafico-columnas {
+        height: 150px;
+    }
+
+    .impresion__firmas {
+        grid-template-columns: 1fr;
+        gap: var(--esp-8);
+    }
+
+    .acciones-fila {
+        justify-content: flex-start;
+    }
+
+    .tarjeta__cabecera--fila {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

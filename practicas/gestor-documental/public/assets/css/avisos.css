@@ -1,0 +1,72 @@
+/* =====================================================================
+   Archivo: avisos.css
+   Descripcion: Avisos flotantes generados por JavaScript.
+   ===================================================================== */
+
+.avisos-flotantes {
+    position: fixed;
+    right: var(--esp-5);
+    bottom: var(--esp-5);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+    max-width: 360px;
+    pointer-events: none;
+}
+
+.aviso-flotante {
+    padding: var(--esp-3) var(--esp-4);
+    border-radius: var(--radio);
+    border-left: 4px solid var(--azul-500);
+    background: var(--blanco);
+    box-shadow: var(--sombra-lg);
+    font-size: var(--texto-md);
+    color: var(--texto);
+    animation: avisoEntrada 200ms ease;
+    pointer-events: auto;
+}
+
+.aviso-flotante--exito {
+    border-color: var(--verde-600);
+    background: var(--verde-100);
+    color: #145c39;
+}
+
+.aviso-flotante--error {
+    border-color: var(--rojo-600);
+    background: var(--rojo-100);
+    color: #7d1f1f;
+}
+
+.aviso-flotante--advertencia {
+    border-color: var(--ambar-600);
+    background: var(--ambar-100);
+    color: #7a4d0d;
+}
+
+.aviso-flotante--info {
+    border-color: var(--azul-600);
+    background: var(--azul-100);
+    color: var(--azul-800);
+}
+
+.aviso-flotante--saliendo {
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 300ms ease, transform 300ms ease;
+}
+
+@keyframes avisoEntrada {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 560px) {
+    .avisos-flotantes {
+        right: var(--esp-3);
+        left: var(--esp-3);
+        bottom: var(--esp-3);
+        max-width: none;
+    }
+}

@@ -1,0 +1,218 @@
+/* =====================================================================
+   Archivo: auth.css
+   Descripcion: Pantallas de autenticacion (inicio de sesion y registro).
+   ===================================================================== */
+
+body.auth {
+    background: linear-gradient(140deg, var(--azul-900) 0%, var(--azul-800) 55%, var(--azul-700) 100%);
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: var(--esp-6) var(--esp-4);
+}
+
+.auth__contenedor {
+    width: 100%;
+    max-width: 1040px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--blanco);
+    border-radius: var(--radio-lg);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .3);
+    overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------
+   PANEL INFORMATIVO
+   --------------------------------------------------------------------- */
+.auth__lateral {
+    padding: var(--esp-10) var(--esp-8);
+    background: linear-gradient(160deg, var(--azul-800), var(--azul-900));
+    color: #c7d6e6;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-6);
+}
+
+.auth__marca {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+}
+
+.auth__titulo {
+    font-size: var(--texto-2xl);
+    color: var(--blanco);
+    line-height: 1.25;
+}
+
+.auth__descripcion {
+    font-size: var(--texto-base);
+    color: #a8bdd3;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.auth__lista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-3);
+    font-size: var(--texto-md);
+}
+
+.auth__lista li {
+    position: relative;
+    padding-left: var(--esp-6);
+    color: #b9cadd;
+    line-height: 1.5;
+}
+
+.auth__lista li::before {
+    content: '\2713';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--azul-300);
+    font-weight: 700;
+}
+
+.auth__nota {
+    margin-top: auto;
+    padding-top: var(--esp-5);
+    border-top: 1px solid rgba(255, 255, 255, .12);
+    font-size: var(--texto-sm);
+    color: #8fa5bb;
+    line-height: 1.55;
+}
+
+/* ---------------------------------------------------------------------
+   FORMULARIO
+   --------------------------------------------------------------------- */
+.auth__formulario {
+    padding: var(--esp-10) var(--esp-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-5);
+    max-height: 92vh;
+    overflow-y: auto;
+}
+
+.auth__encabezado {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-1);
+}
+
+.auth__subtitulo {
+    font-size: var(--texto-2xl);
+}
+
+.auth__ayuda {
+    font-size: var(--texto-md);
+    color: var(--texto-suave);
+    margin: 0;
+}
+
+.auth__separador {
+    display: flex;
+    align-items: center;
+    gap: var(--esp-3);
+    font-size: var(--texto-sm);
+    color: var(--texto-tenue);
+}
+
+.auth__separador::before,
+.auth__separador::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--borde-suave);
+}
+
+.auth__pie {
+    margin: 0;
+    text-align: center;
+    font-size: var(--texto-sm);
+    color: var(--texto-tenue);
+}
+
+/* Credenciales de demostracion */
+.auth__demo {
+    padding: var(--esp-3) var(--esp-4);
+    background: var(--fondo-suave);
+    border: 1px solid var(--borde-suave);
+    border-radius: var(--radio);
+    font-size: var(--texto-sm);
+}
+
+.auth__demo summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--azul-700);
+    user-select: none;
+}
+
+.auth__demo[open] summary {
+    margin-bottom: var(--esp-3);
+}
+
+.auth__demo table {
+    margin-bottom: var(--esp-2);
+}
+
+.auth__demo code {
+    background: var(--blanco);
+    padding: 1px 6px;
+    border-radius: var(--radio-sm);
+    border: 1px solid var(--borde);
+    color: var(--azul-800);
+    font-weight: 600;
+}
+
+/* Lista de requisitos de contrasena */
+.lista-requisitos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+    margin-bottom: var(--esp-4);
+    font-size: var(--texto-md);
+}
+
+.lista-requisitos li {
+    position: relative;
+    padding-left: var(--esp-6);
+    color: var(--texto-suave);
+}
+
+.lista-requisitos li::before {
+    content: '\2022';
+    position: absolute;
+    left: var(--esp-2);
+    color: var(--azul-500);
+    font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------
+   RESPONSIVO
+   --------------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .auth__contenedor {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+    }
+
+    .auth__lateral {
+        padding: var(--esp-6);
+        gap: var(--esp-4);
+    }
+
+    .auth__lista,
+    .auth__nota {
+        display: none;
+    }
+
+    .auth__formulario {
+        padding: var(--esp-6);
+        max-height: none;
+    }
+}
