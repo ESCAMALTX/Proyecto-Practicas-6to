@@ -335,4 +335,31 @@ class Helper
     {
         return json_encode($datos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '{}';
     }
+
+    /**
+     * Renderiza el icono visual con formato ISOtools (PPT, DOC, XLS, PDF, LINK).
+     */
+    public static function renderIsoIconoArchivo(?string $extension, string $titulo = ''): string
+    {
+        $ext = strtolower(trim((string)$extension));
+        $tit = mb_strtolower($titulo);
+
+        if ($ext === 'ppt' || $ext === 'pptx' || str_contains($tit, 'presentac')) {
+            return '<span class="iso-file-icon iso-file-icon--ppt" title="Presentación PowerPoint">PPT</span>';
+        }
+        if ($ext === 'doc' || $ext === 'docx' || str_contains($tit, 'plantilla') || str_contains($tit, 'contrato') || str_contains($tit, 'acta')) {
+            return '<span class="iso-file-icon iso-file-icon--doc" title="Documento Word">DOC</span>';
+        }
+        if ($ext === 'xls' || $ext === 'xlsx' || str_contains($tit, 'informe') || str_contains($tit, 'balance')) {
+            return '<span class="iso-file-icon iso-file-icon--xls" title="Hoja de Cálculo Excel">XLS</span>';
+        }
+        if (str_contains($tit, 'enlace') || str_contains($tit, 'link') || str_contains($tit, 'evento')) {
+            return '<span class="iso-file-icon iso-file-icon--link" title="Enlace web"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00688f" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></span>';
+        }
+        if ($ext === 'pdf' || str_contains($tit, 'politica') || str_contains($tit, 'concepto') || str_contains($tit, 'manual')) {
+            return '<span class="iso-file-icon iso-file-icon--pdf" title="Documento PDF">PDF</span>';
+        }
+
+        return '<span class="iso-file-icon iso-file-icon--doc" title="Documento">DOC</span>';
+    }
 }

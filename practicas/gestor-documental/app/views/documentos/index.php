@@ -1,299 +1,229 @@
 <?php
 /**
  * Vista: app/views/documentos/index.php
- * Listado de documentos con filtros y paginacion (RF-004, RF-016, RF-024).
+ * Estructura e interfaz inspirada en ISOTools Gestor Documental.
  */
 require RUTA_VISTAS . '/partials/header.php';
 
-// Parametros conservados en la paginacion
-$parametrosBase = array_filter([
-    'modulo'           => 'documentos',
-    'q'                => $filtros['busqueda'] ?? '',
-    'categoria'        => $filtros['id_categoria'] ?? '',
-    'area'             => $filtros['id_area'] ?? '',
-    'caso'             => $filtros['id_caso'] ?? '',
-    'responsable'      => $filtros['id_responsable'] ?? '',
-    'estado'           => $filtros['estado'] ?? '',
-    'confidencialidad' => $filtros['confidencialidad'] ?? '',
-    'etiqueta'         => $filtros['etiqueta'] ?? '',
-    'fecha_desde'      => $filtros['fecha_desde'] ?? '',
-    'fecha_hasta'      => $filtros['fecha_hasta'] ?? '',
-], fn($valor) => $valor !== '' && $valor !== null);
+$categoriaActual = (int) ($filtros['id_categoria'] ?? 0);
+$nombreCarpetaActual = 'Procedimientos';
+foreach ($categorias as $c) {
+    if ((int)$c['id_categoria'] === $categoriaActual) {
+        $nombreCarpetaActual = $c['nombre'];
+        break;
+    }
+}
 ?>
 
-<section class="encabezado-seccion">
-    <div>
-        <h2 class="encabezado-seccion__titulo">Inventario documental</h2>
-        <p class="encabezado-seccion__meta">
-            <?= (int) $paginacion['total'] ?> documento(s) a su alcance
-            <?= count($filtros) > 0 ? ' · con filtros aplicados' : '' ?>
-        </p>
-    </div>
+<div class="iso-workspace">
 
-    <div class="encabezado-seccion__acciones">
-        <a class="boton boton--secundario"
-           href="<?= Helper::url('reportes', 'inventario') ?>">Exportar CSV</a>
+    <!-- =============================================================
+         PANEL IZQUIERDO: ARBOL DE CARPETAS / SISTEMA DE GESTION
+         ============================================================= -->
+    <aside class="iso-sidebar">
 
-        <?php if (Sesion::puede('documentos', 'crear')): ?>
-            <a class="boton boton--primario"
-               href="<?= Helper::url('documentos', 'crear') ?>">Cargar documento</a>
-        <?php endif; ?>
-    </div>
-</section>
+        <!-- Herramientas superiores de vista -->
+        <div class="iso-sidebar__tools">
+            <button type="button" class="iso-tool-btn" title="Buscar en árbol" onclick="document.getElementById('inputArbolBusqueda').focus();"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button>
+            <button type="button" class="iso-tool-btn" title="Vista de lista / jerarquía"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg></button>
+        </div>
 
-<!-- =================================================================
-     FILTROS
-     ================================================================= -->
-<section class="tarjeta">
-    <div class="tarjeta__cuerpo">
-        <form method="get" action="index.php" class="formulario">
+        <!-- Selector desplegable de sistema -->
+        <select class="iso-select" id="selectSistemaGestion" onchange="if(this.value) window.location.href=this.value;">
+            <option value="<?= Helper::url('documentos') ?>">Sistema de Gestión</option>
+            <?php foreach ($categorias as $cat): ?>
+                <option value="<?= Helper::url('documentos', '', ['categoria' => $cat['id_categoria']]) ?>"
+                    <?= $categoriaActual === (int) $cat['id_categoria'] ? 'selected' : '' ?>>
+                    <?= Helper::e($cat['nombre']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
+        <!-- Boton relaciones de documentos -->
+        <button type="button" class="iso-btn-relations" onclick="alert('Relaciones de documentos: Vinculación de procesos y normativas.')">
+            Relaciones de documentos
+        </button>
+
+        <!-- Buscador rapido del árbol -->
+        <form method="get" action="index.php" class="iso-tree-search">
             <input type="hidden" name="modulo" value="documentos">
-
-            <div class="formulario__fila formulario__fila--3">
-                <div class="campo campo--amplio">
-                    <label class="campo__etiqueta" for="q">Buscar</label>
-                    <input type="search" class="campo__control" id="q" name="q"
-                           value="<?= Helper::e($filtros['busqueda'] ?? '') ?>"
-                           placeholder="Titulo, codigo, descripcion o palabra clave">
-                </div>
-
-                <div class="campo">
-                    <label class="campo__etiqueta" for="categoria">Categoria</label>
-                    <select class="campo__control" id="categoria" name="categoria">
-                        <option value="">Todas</option>
-                        <?php foreach ($categorias as $cat): ?>
-                            <option value="<?= (int) $cat['id_categoria'] ?>"
-                                <?= (int) ($filtros['id_categoria'] ?? 0) === (int) $cat['id_categoria'] ? 'selected' : '' ?>>
-                                <?= Helper::e($cat['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="campo">
-                    <label class="campo__etiqueta" for="estado">Estado</label>
-                    <select class="campo__control" id="estado" name="estado">
-                        <option value="">Todos</option>
-                        <?php foreach (['BORRADOR', 'EN_PROCESO', 'PUBLICADO', 'ARCHIVADO', 'ELIMINADO'] as $opcion): ?>
-                            <option value="<?= $opcion ?>"
-                                <?= ($filtros['estado'] ?? '') === $opcion ? 'selected' : '' ?>>
-                                <?= Helper::e($opcion) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="formulario__fila formulario__fila--4">
-                <div class="campo">
-                    <label class="campo__etiqueta" for="area">Area</label>
-                    <select class="campo__control" id="area" name="area">
-                        <option value="">Todas</option>
-                        <?php foreach ($areas as $area): ?>
-                            <option value="<?= (int) $area['id_area'] ?>"
-                                <?= (int) ($filtros['id_area'] ?? 0) === (int) $area['id_area'] ? 'selected' : '' ?>>
-                                <?= Helper::e($area['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="campo">
-                    <label class="campo__etiqueta" for="caso">Caso</label>
-                    <select class="campo__control" id="caso" name="caso">
-                        <option value="">Todos</option>
-                        <?php foreach ($casos as $caso): ?>
-                            <option value="<?= (int) $caso['id_caso'] ?>"
-                                <?= (int) ($filtros['id_caso'] ?? 0) === (int) $caso['id_caso'] ? 'selected' : '' ?>>
-                                <?= Helper::e($caso['codigo']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="campo">
-                    <label class="campo__etiqueta" for="confidencialidad">Confidencialidad</label>
-                    <select class="campo__control" id="confidencialidad" name="confidencialidad">
-                        <option value="">Todas</option>
-                        <?php foreach (['PUBLICO', 'INTERNO', 'RESERVADO', 'CONFIDENCIAL'] as $opcion): ?>
-                            <option value="<?= $opcion ?>"
-                                <?= ($filtros['confidencialidad'] ?? '') === $opcion ? 'selected' : '' ?>>
-                                <?= Helper::e($opcion) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="campo">
-                    <label class="campo__etiqueta" for="responsable">Responsable</label>
-                    <select class="campo__control" id="responsable" name="responsable">
-                        <option value="">Todos</option>
-                        <?php foreach ($responsables as $resp): ?>
-                            <option value="<?= (int) $resp['id_responsable'] ?>"
-                                <?= (int) ($filtros['id_responsable'] ?? 0) === (int) $resp['id_responsable'] ? 'selected' : '' ?>>
-                                <?= Helper::e(mb_strimwidth($resp['responsable'], 0, 34, '...')) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="formulario__fila formulario__fila--4">
-                <div class="campo">
-                    <label class="campo__etiqueta" for="etiqueta">Etiqueta</label>
-                    <select class="campo__control" id="etiqueta" name="etiqueta">
-                        <option value="">Todas</option>
-                        <?php foreach ($etiquetas as $etq): ?>
-                            <option value="<?= Helper::e($etq['nombre']) ?>"
-                                <?= ($filtros['etiqueta'] ?? '') === $etq['nombre'] ? 'selected' : '' ?>>
-                                <?= Helper::e($etq['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="campo">
-                    <label class="campo__etiqueta" for="fecha_desde">Fecha desde</label>
-                    <input type="date" class="campo__control" id="fecha_desde"
-                           name="fecha_desde" value="<?= Helper::e($filtros['fecha_desde'] ?? '') ?>">
-                </div>
-
-                <div class="campo">
-                    <label class="campo__etiqueta" for="fecha_hasta">Fecha hasta</label>
-                    <input type="date" class="campo__control" id="fecha_hasta"
-                           name="fecha_hasta" value="<?= Helper::e($filtros['fecha_hasta'] ?? '') ?>">
-                </div>
-
-                <div class="campo campo--acciones">
-                    <button type="submit" class="boton boton--primario">Filtrar</button>
-                    <a class="boton boton--fantasma" href="<?= Helper::url('documentos') ?>">Limpiar</a>
-                </div>
-            </div>
+            <input type="text" id="inputArbolBusqueda" name="q" placeholder="" value="<?= Helper::e($filtros['busqueda'] ?? '') ?>">
+            <button type="submit" title="Buscar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button>
         </form>
-    </div>
-</section>
 
-<!-- =================================================================
-     TABLA DE DOCUMENTOS
-     ================================================================= -->
-<section class="tarjeta">
-    <div class="tarjeta__cuerpo tarjeta__cuerpo--sin-relleno">
+        <!-- Arbol jerarquico -->
+        <div class="iso-tree">
+            <!-- Rama General -->
+            <div class="iso-tree__item">
+                <span class="iso-tree__toggle">&#8250;</span>
+                <a href="<?= Helper::url('documentos') ?>" class="iso-tree__title">General</a>
+            </div>
 
-        <?php if (empty($documentos)): ?>
-            <div class="estado-vacio estado-vacio--compacto">
-                <div class="estado-vacio__icono" aria-hidden="true">&#128193;</div>
-                <h3 class="estado-vacio__titulo">No hay documentos que mostrar</h3>
-                <p class="estado-vacio__texto">
-                    <?= count($filtros) > 0
-                        ? 'Ningun documento coincide con los filtros aplicados.'
-                        : 'Todavia no se han registrado documentos en el sistema.' ?>
-                </p>
-                <?php if (Sesion::puede('documentos', 'crear')): ?>
-                    <a class="boton boton--primario"
-                       href="<?= Helper::url('documentos', 'crear') ?>">Cargar el primer documento</a>
+            <!-- Rama Procesos Clave -->
+            <div class="iso-tree__item">
+                <span class="iso-tree__toggle">&#709;</span>
+                <span class="iso-tree__title">Procesos Clave</span>
+            </div>
+
+            <div class="iso-tree__subgroup">
+                <div class="iso-tree__header-branch">Vigor</div>
+
+                <!-- Carpeta 1 -->
+                <div class="iso-tree__leaf">
+                    <span class="iso-tree__dots">...</span>
+                    <span class="iso-tree__folder-icon"></span>
+                    <span style="font-weight:600;">Carpeta 1</span>
+                </div>
+
+                <div style="padding-left: 16px;">
+                    <!-- Procedimientos (Activo) -->
+                    <a href="<?= Helper::url('documentos') ?>" class="iso-tree__leaf <?= empty($categoriaActual) ? 'iso-tree__leaf--active' : '' ?>">
+                        <span class="iso-tree__dots">...</span>
+                        <span class="iso-tree__folder-icon" style="background:#00688f;"></span>
+                        <span>Procedimientos</span>
+                    </a>
+                    <a href="<?= Helper::url('documentos', '', ['categoria' => 1]) ?>" class="iso-tree__leaf <?= $categoriaActual === 1 ? 'iso-tree__leaf--active' : '' ?>">
+                        <span class="iso-tree__dots">...</span>
+                        <span class="iso-tree__folder-icon"></span>
+                        <span>Carpeta 1a</span>
+                    </a>
+                </div>
+
+                <a href="<?= Helper::url('documentos', '', ['categoria' => 2]) ?>" class="iso-tree__leaf <?= $categoriaActual === 2 ? 'iso-tree__leaf--active' : '' ?>">
+                    <span class="iso-tree__dots">...</span>
+                    <span class="iso-tree__folder-icon"></span>
+                    <span>Carpeta 1b</span>
+                </a>
+                <a href="<?= Helper::url('documentos', '', ['categoria' => 3]) ?>" class="iso-tree__leaf <?= $categoriaActual === 3 ? 'iso-tree__leaf--active' : '' ?>">
+                    <span class="iso-tree__dots">...</span>
+                    <span class="iso-tree__folder-icon"></span>
+                    <span>Carpeta 1c</span>
+                </a>
+                <a href="<?= Helper::url('documentos', '', ['categoria' => 4]) ?>" class="iso-tree__leaf <?= $categoriaActual === 4 ? 'iso-tree__leaf--active' : '' ?>">
+                    <span class="iso-tree__dots">...</span>
+                    <span class="iso-tree__folder-icon"></span>
+                    <span>Carpeta 1d</span>
+                </a>
+                <a href="<?= Helper::url('documentos', '', ['categoria' => 5]) ?>" class="iso-tree__leaf <?= $categoriaActual === 5 ? 'iso-tree__leaf--active' : '' ?>">
+                    <span class="iso-tree__dots">...</span>
+                    <span class="iso-tree__folder-icon"></span>
+                    <span>Carpeta 1e</span>
+                </a>
+
+                <?php if (!empty($categorias)): ?>
+                    <div class="iso-tree__header-branch" style="margin-top: 10px;">Categorías</div>
+                    <?php foreach ($categorias as $cat): ?>
+                        <a href="<?= Helper::url('documentos', '', ['categoria' => $cat['id_categoria']]) ?>"
+                           class="iso-tree__leaf <?= $categoriaActual === (int)$cat['id_categoria'] ? 'iso-tree__leaf--active' : '' ?>">
+                            <span class="iso-tree__dots">...</span>
+                            <span class="iso-tree__folder-icon"></span>
+                            <span><?= Helper::e($cat['nombre']) ?></span>
+                        </a>
+                    <?php endforeach; ?>
                 <?php endif; ?>
             </div>
-        <?php else: ?>
+        </div>
 
-            <div class="tabla-contenedor">
-                <table class="tabla tabla--interactiva">
-                    <thead>
+    </aside>
+
+    <!-- =============================================================
+         PANEL DERECHO: CONTENIDO, ACCIONES Y TABLA DE DOCUMENTOS
+         ============================================================= -->
+    <main class="iso-content">
+
+        <!-- Ruta de migas de pan -->
+        <div class="iso-breadcrumb">
+            <strong>Documentos de la carpeta:</strong> / Sistema de Gestión / Procesos Clave / Vigor / Carpeta 1 / <?= Helper::e($nombreCarpetaActual) ?>
+            <?php if (!empty($filtros['busqueda'])): ?>
+                &nbsp;·&nbsp;<em>Filtro: "<?= Helper::e($filtros['busqueda']) ?>"</em>
+            <?php endif; ?>
+        </div>
+
+        <!-- Barra de botones de acción -->
+        <div class="iso-actions-bar">
+            <button type="button" class="iso-btn" onclick="window.history.back()">Atrás</button>
+            <?php if (Sesion::puede('documentos', 'crear')): ?>
+                <a href="<?= Helper::url('documentos', 'crear') ?>" class="iso-btn">Nuevo documento</a>
+                <a href="<?= Helper::url('documentos', 'crear') ?>" class="iso-btn">Nuevo fichero</a>
+                <a href="javascript:void(0)" onclick="alert('Registrar nuevo enlace web.')" class="iso-btn">Nuevo enlace</a>
+            <?php endif; ?>
+            <button type="button" class="iso-btn" onclick="window.print()">Imprimir</button>
+        </div>
+
+        <!-- Tabla con estilo ISOTools -->
+        <div class="iso-table-container">
+            <table class="iso-table">
+                <thead>
+                    <tr>
+                        <th style="width: 24px;" class="center">
+                            <input type="checkbox" id="checkAllDocs" onclick="document.querySelectorAll('.doc-check').forEach(function(c){ c.checked = this.checked; }, this)">
+                        </th>
+                        <th style="width: 26px;" class="center">
+                            <span title="Acciones" style="font-size:12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></span>
+                        </th>
+                        <th>Título &#9660;</th>
+                        <th style="width: 140px;">Fase</th>
+                        <th style="width: 220px;">Propietario</th>
+                        <th class="center" style="width: 44px;">Ver.</th>
+                        <th style="width: 90px;">Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($documentos)): ?>
                         <tr>
-                            <th>Codigo</th>
-                            <th>Documento</th>
-                            <th>Categoria</th>
-                            <th>Area</th>
-                            <th>Confidencialidad</th>
-                            <th>Estado</th>
-                            <th>Version</th>
-                            <th>Fecha</th>
-                            <th class="tabla__celda-acciones">Acciones</th>
+                            <td colspan="7" style="text-align: center; padding: 30px; color: #666;">
+                                No hay documentos en esta carpeta.
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
+                    <?php else: ?>
                         <?php foreach ($documentos as $doc): ?>
                             <tr>
-                                <td>
-                                    <span class="texto-mono"><?= Helper::e($doc['codigo']) ?></span>
+                                <td class="center">
+                                    <input type="checkbox" class="doc-check" value="<?= (int) $doc['id_documento'] ?>">
                                 </td>
-                                <td>
-                                    <a class="enlace-fuerte"
-                                       href="<?= Helper::url('documentos', 'ver', ['id' => $doc['id_documento']]) ?>">
-                                        <?= Helper::e(mb_strimwidth($doc['titulo'], 0, 58, '...')) ?>
+                                <td class="center">
+                                    <a href="<?= Helper::url('documentos', 'ver', ['id' => $doc['id_documento']]) ?>"
+                                       class="iso-action-doc-icon" title="Ver ficha del documento">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                                     </a>
-                                    <span class="texto-bloque texto-mini">
-                                        <?= Helper::e(mb_strimwidth((string) $doc['responsable'], 0, 40, '...')) ?>
-                                        <?php if (!empty($doc['nombre_archivo'])): ?>
-                                            · <?= Helper::e(Helper::iconoArchivo((string) $doc['extension'])) ?>
-                                        <?php endif; ?>
-                                    </span>
-                                </td>
-                                <td><?= Helper::e($doc['categoria']) ?></td>
-                                <td class="texto-mini"><?= Helper::eo($doc['area'], '—') ?></td>
-                                <td>
-                                    <span class="<?= Helper::claseConfidencialidad($doc['nivel_confidencialidad']) ?>">
-                                        <?= Helper::e($doc['nivel_confidencialidad']) ?>
-                                    </span>
                                 </td>
                                 <td>
-                                    <span class="<?= Helper::claseEstado($doc['estado']) ?>">
-                                        <?= Helper::e($doc['estado']) ?>
-                                    </span>
-                                </td>
-                                <td class="tabla__celda-centrada">
-                                    v<?= (int) $doc['version_actual'] ?>
-                                    <span class="texto-mini">/<?= (int) $doc['total_versiones'] ?></span>
-                                </td>
-                                <td class="texto-mini">
-                                    <?= Helper::e(Helper::fecha($doc['fecha_documento'])) ?>
-                                </td>
-                                <td class="tabla__celda-acciones">
-                                    <div class="acciones-fila">
-                                        <a class="boton boton--fantasma boton--mini"
-                                           href="<?= Helper::url('documentos', 'ver', ['id' => $doc['id_documento']]) ?>"
-                                           title="Ver la ficha del documento">Ver</a>
-
-                                        <?php if (Sesion::puede('documentos', 'editar')): ?>
-                                            <a class="boton boton--fantasma boton--mini"
-                                               href="<?= Helper::url('documentos', 'editar', ['id' => $doc['id_documento']]) ?>"
-                                               title="Editar los metadatos">Editar</a>
-                                        <?php endif; ?>
+                                    <div class="iso-doc-cell">
+                                        <?= Helper::renderIsoIconoArchivo($doc['extension'] ?? '', $doc['titulo'] ?? '') ?>
+                                        <a href="<?= Helper::url('documentos', 'ver', ['id' => $doc['id_documento']]) ?>"
+                                           class="iso-doc-title">
+                                            <?= Helper::e($doc['titulo']) ?>
+                                        </a>
                                     </div>
+                                </td>
+                                <td>
+                                    <?= Helper::e($doc['estado'] === 'PUBLICADO' ? 'Vigente' : ($doc['estado'] === 'BORRADOR' ? 'Borrador' : $doc['estado'])) ?>
+                                </td>
+                                <td>
+                                    <?= Helper::e(!empty($doc['autor']) ? $doc['autor'] : $doc['responsable']) ?>
+                                </td>
+                                <td class="center">
+                                    <?= (int) $doc['version_actual'] ?>
+                                </td>
+                                <td>
+                                    <?= date('d/m/Y', strtotime($doc['fecha_documento'])) ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Paginacion -->
-            <?php if ($paginacion['total_paginas'] > 1): ?>
-                <nav class="paginacion" aria-label="Paginacion de documentos">
-                    <?php if ($paginacion['pagina_actual'] > 1): ?>
-                        <a class="paginacion__enlace"
-                           href="index.php?<?= http_build_query(array_merge($parametrosBase, ['pagina' => $paginacion['pagina_actual'] - 1])) ?>">
-                            &laquo; Anterior
-                        </a>
                     <?php endif; ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="7">
+                            Total: <?= (int) $paginacion['total'] ?>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
 
-                    <span class="paginacion__info">
-                        Pagina <?= (int) $paginacion['pagina_actual'] ?>
-                        de <?= (int) $paginacion['total_paginas'] ?>
-                        · <?= (int) $paginacion['desde'] ?>–<?= (int) $paginacion['hasta'] ?>
-                        de <?= (int) $paginacion['total'] ?>
-                    </span>
+    </main>
 
-                    <?php if ($paginacion['pagina_actual'] < $paginacion['total_paginas']): ?>
-                        <a class="paginacion__enlace"
-                           href="index.php?<?= http_build_query(array_merge($parametrosBase, ['pagina' => $paginacion['pagina_actual'] + 1])) ?>">
-                            Siguiente &raquo;
-                        </a>
-                    <?php endif; ?>
-                </nav>
-            <?php endif; ?>
-
-        <?php endif; ?>
-    </div>
-</section>
+</div>
 
 <?php require RUTA_VISTAS . '/partials/footer.php'; ?>

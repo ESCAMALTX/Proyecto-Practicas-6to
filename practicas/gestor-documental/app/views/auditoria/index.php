@@ -146,7 +146,7 @@ require RUTA_VISTAS . '/partials/header.php';
 
         <?php if (empty($eventos)): ?>
             <div class="estado-vacio estado-vacio--compacto">
-                <div class="estado-vacio__icono" aria-hidden="true">&#128220;</div>
+                <div class="estado-vacio__icono" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div>
                 <h3 class="estado-vacio__titulo">Sin eventos registrados</h3>
                 <p class="estado-vacio__texto">
                     No hay registros de auditoria que coincidan con los filtros.

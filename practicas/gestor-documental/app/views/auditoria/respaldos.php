@@ -117,7 +117,7 @@ require RUTA_VISTAS . '/partials/header.php';
     <div class="tarjeta__cuerpo tarjeta__cuerpo--sin-relleno">
         <?php if (empty($respaldos)): ?>
             <div class="estado-vacio estado-vacio--compacto">
-                <div class="estado-vacio__icono" aria-hidden="true">&#128190;</div>
+                <div class="estado-vacio__icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></div>
                 <h3 class="estado-vacio__titulo">Todavia no se han generado respaldos</h3>
                 <p class="estado-vacio__texto">
                     Se recomienda generar un respaldo antes de cada cambio importante

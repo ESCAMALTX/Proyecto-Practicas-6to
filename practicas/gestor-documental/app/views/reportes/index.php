@@ -46,7 +46,7 @@ $maxDia = !empty($consultasPorDia)
      ================================================================= -->
 <section class="metricas">
     <article class="metrica">
-        <div class="metrica__icono" aria-hidden="true">&#128196;</div>
+        <div class="metrica__icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
         <div class="metrica__datos">
             <span class="metrica__valor"><?= (int) $totales['total'] ?></span>
             <span class="metrica__etiqueta">Documentos registrados</span>
@@ -54,7 +54,7 @@ $maxDia = !empty($consultasPorDia)
     </article>
 
     <article class="metrica">
-        <div class="metrica__icono" aria-hidden="true">&#9989;</div>
+        <div class="metrica__icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
         <div class="metrica__datos">
             <span class="metrica__valor"><?= (int) $totales['publicados'] ?></span>
             <span class="metrica__etiqueta">Publicados</span>
@@ -62,7 +62,7 @@ $maxDia = !empty($consultasPorDia)
     </article>
 
     <article class="metrica">
-        <div class="metrica__icono" aria-hidden="true">&#128202;</div>
+        <div class="metrica__icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></div>
         <div class="metrica__datos">
             <span class="metrica__valor"><?= (int) $totales['versiones'] ?></span>
             <span class="metrica__etiqueta">Versiones almacenadas</span>
@@ -70,7 +70,7 @@ $maxDia = !empty($consultasPorDia)
     </article>
 
     <article class="metrica">
-        <div class="metrica__icono" aria-hidden="true">&#128190;</div>
+        <div class="metrica__icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></div>
         <div class="metrica__datos">
             <span class="metrica__valor"><?= Helper::e(Helper::pesoLegible((int) $totales['peso'])) ?></span>
             <span class="metrica__etiqueta">Espacio ocupado</span>

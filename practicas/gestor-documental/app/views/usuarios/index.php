@@ -98,7 +98,7 @@ require RUTA_VISTAS . '/partials/header.php';
 
         <?php if (empty($usuarios)): ?>
             <div class="estado-vacio estado-vacio--compacto">
-                <div class="estado-vacio__icono" aria-hidden="true">&#128100;</div>
+                <div class="estado-vacio__icono" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
                 <h3 class="estado-vacio__titulo">No hay usuarios que mostrar</h3>
                 <p class="estado-vacio__texto">
                     <?= ($busqueda !== '' || $idRol > 0 || $estado !== '')

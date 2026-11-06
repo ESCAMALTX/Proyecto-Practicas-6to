@@ -226,9 +226,21 @@ gestor-documental/
 
 ---
 
-## 6. Cómo funciona la consulta documental
+## 6. Arquitectura y Consulta Documental
 
-El sistema **no usa inteligencia artificial**. El flujo es el siguiente:
+El sistema resuelve la gestión y consulta documental mediante librerías de software estándar y consultas estructuradas en MySQL, sin requerir componentes de inteligencia artificial. El procesamiento y la extracción se realizan de manera determinista y local.
+
+### Librerías Utilizadas
+
+| Librería / Componente | Función en la Arquitectura |
+|---|---|
+| **ZipArchive (PHP Lib)** | Descompresión en memoria y lectura de árboles XML (word/document.xml, xl/sharedStrings.xml) para extraer texto de archivos .docx y .xlsx. |
+| **info / Fileinfo (PHP Lib)** | Inspección de firmas binarias (Magic Bytes) para validación estricta de tipos MIME reales. |
+| **PDO MySQL (PHP Data Objects)** | Conexión e interacción segura mediante sentencias SQL preparadas contra inyección. |
+| **mbstring (PHP Multibyte)** | Normalización, búsqueda y codificación de texto multilingüe en UTF-8. |
+| **OpenSSL / Hash Lib (PHP Lib)** | Cálculo de hashes criptográficos SHA-256 para validación de integridad documental. |
+
+El flujo de consulta documental es el siguiente: El flujo es el siguiente:
 
 1. El usuario escribe palabras clave en el buscador.
 2. Opcionalmente aplica filtros: categoría, área, caso, estado,

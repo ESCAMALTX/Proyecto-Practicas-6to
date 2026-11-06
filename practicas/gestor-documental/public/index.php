@@ -116,8 +116,11 @@ set_error_handler(function ($numero, $mensaje, $archivo, $linea) {
 });
 
 // ---------------------------------------------------------------------
-// 6. Inicio de la sesion
+// 6. Inicio de la sesion y cabecera de codificacion
 // ---------------------------------------------------------------------
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+}
 Sesion::iniciar();
 
 // ---------------------------------------------------------------------

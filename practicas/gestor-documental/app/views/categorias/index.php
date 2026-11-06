@@ -41,7 +41,7 @@ require RUTA_VISTAS . '/partials/header.php';
 
         <?php if (empty($categorias)): ?>
             <div class="estado-vacio estado-vacio--compacto">
-                <div class="estado-vacio__icono" aria-hidden="true">&#128193;</div>
+                <div class="estado-vacio__icono" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></div>
                 <h3 class="estado-vacio__titulo">No hay categorias</h3>
                 <p class="estado-vacio__texto">
                     <?= $busqueda !== ''

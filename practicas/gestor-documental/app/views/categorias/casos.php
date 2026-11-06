@@ -51,7 +51,7 @@ require RUTA_VISTAS . '/partials/header.php';
 
         <?php if (empty($casos)): ?>
             <div class="estado-vacio estado-vacio--compacto">
-                <div class="estado-vacio__icono" aria-hidden="true">&#128210;</div>
+                <div class="estado-vacio__icono" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></div>
                 <h3 class="estado-vacio__titulo">No hay casos registrados</h3>
                 <p class="estado-vacio__texto">
                     Los casos permiten agrupar documentos relacionados con un

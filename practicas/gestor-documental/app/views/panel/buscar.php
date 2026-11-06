@@ -18,7 +18,7 @@ require RUTA_VISTAS . '/partials/header.php';
         <input type="hidden" name="accion" value="buscar">
 
         <div class="buscador__caja">
-            <span class="buscador__icono" aria-hidden="true">&#128269;</span>
+            <span class="buscador__icono" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             <input type="search"
                    class="buscador__entrada"
                    name="q"
@@ -151,7 +151,7 @@ require RUTA_VISTAS . '/partials/header.php';
 <?php if ($termino === '' && count($filtros) <= 1): ?>
 
     <div class="estado-vacio">
-        <div class="estado-vacio__icono" aria-hidden="true">&#128269;</div>
+        <div class="estado-vacio__icono" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
         <h2 class="estado-vacio__titulo">Comience su consulta</h2>
         <p class="estado-vacio__texto">
             Escriba palabras clave para localizar documentos institucionales.

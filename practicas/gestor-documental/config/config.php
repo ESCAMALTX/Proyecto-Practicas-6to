@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------------
 date_default_timezone_set('America/Bogota');
 mb_internal_encoding('UTF-8');
+ini_set('default_charset', 'UTF-8');
 
 // ---------------------------------------------------------------------
 // Entorno: 'desarrollo' muestra errores, 'produccion' los oculta.
@@ -33,7 +34,7 @@ define('DB_HOST', '127.0.0.1');
 define('DB_PUERTO', 3306);
 define('DB_NOMBRE', 'gestor_documental');
 define('DB_USUARIO', 'root');
-define('DB_CLAVE', '12345');      // Contrasena del usuario root de MySQL
+define('DB_CLAVE', '');          // Contrasena del usuario root de MySQL (vacio por defecto en XAMPP)
 define('DB_CHARSET', 'utf8mb4');
 
 // ---------------------------------------------------------------------
