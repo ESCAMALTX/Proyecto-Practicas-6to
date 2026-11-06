@@ -1,1 +1,0 @@
-# Proyecto-Practicas-6to
